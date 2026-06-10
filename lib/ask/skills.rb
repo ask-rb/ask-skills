@@ -22,14 +22,19 @@ module Ask
 
       def default_sources
         [
-          Source::Gems.new,
+          # Highest priority first — first source wins in Registry
           Source::Filesystem.new(project_dir: ".agents/skills"),
           Source::Filesystem.new(user_dir: "~/.config/ask/skills"),
+          Source::Gems.new,
+          Source::Filesystem.new(dir: builtin_skills_dir),
         ]
       end
 
       def builtin_skills_dir
-        File.expand_path("../skills", __dir__)
+        # Skills live in lib/ask/skills/<skill_name>/SKILL.md
+        # __dir__ in this file (lib/ask/skills.rb) is lib/ask/
+        # The skill directories are in lib/ask/skills/
+        File.join(__dir__, "skills")
       end
     end
   end

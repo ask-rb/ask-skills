@@ -4,6 +4,10 @@ module Ask
       class Gems < Base
         GLOB = "ask/skills/*/SKILL.md"
 
+        def name
+          "Gems"
+        end
+
         def load
           skills = []
           Gem.find_files(GLOB).each do |path|
@@ -36,8 +40,10 @@ module Ask
           yaml_str = content[4...end_idx]
           yaml = {}
           yaml_str.split("\n").each do |line|
-            if line =~ /^(\w+):\s*(.+)$/
-              yaml[$1] = $2.strip
+            if (m = line.match(/\A(\w+):\s*(.+)\z/))
+              value = m[2].strip
+              value = value.gsub(/\A"|"\z/, "").gsub(/\A'|'\z/, "")
+              yaml[m[1]] = value
             end
           end
           yaml
@@ -47,7 +53,8 @@ module Ask
           return content unless content.start_with?("---\n")
           end_idx = content.index("\n---\n", 4)
           return content unless end_idx
-          content[(end_idx + 5)..] || ""
+          body = content[(end_idx + 5)..] || ""
+          body.sub(/\A\n/, "")
         end
       end
     end

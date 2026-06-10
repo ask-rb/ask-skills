@@ -3,6 +3,8 @@ module Ask
     class Validator
       ValidationError = Data.define(:skill_name, :message)
 
+      NAME_PATTERN = /\A[a-z0-9_.-]+\z/
+
       def initialize(skills)
         @skills = skills
       end
@@ -25,7 +27,7 @@ module Ask
         errors << ValidationError.new(skill.name, "Name is empty") if skill.name.empty?
         errors << ValidationError.new(skill.name, "Description is empty") if skill.description.empty?
         errors << ValidationError.new(skill.name, "Instructions are empty") if skill.instructions.strip.empty?
-        unless skill.name =~ /^[a-z0-9_.-]+$/
+        if !skill.name.empty? && skill.name !~ NAME_PATTERN
           errors << ValidationError.new(skill.name, "Name must be lowercase, with only letters, numbers, dots, hyphens, underscores")
         end
         errors
