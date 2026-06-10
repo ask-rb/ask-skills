@@ -26,7 +26,7 @@ through the architecture.
 | Gem discovery | ❌ | ❌ | ✅ `Gem.find_files("ask/skills/*/SKILL.md")` |
 | Priority resolution | Last wins | Last wins (with collision warnings) | First wins (project > gems > user > built-in) |
 | Validation | None | Name + description | Name + description + duplicate detection |
-| Built-in skills | None | None | explore_codebase, debug_methodology |
+| Built-in skills | None | None | skill.design, skill.compose |
 | System prompt composition | ✅ simple | ✅ XML format | Both: markdown list + XML |
 | Sources | `.agents/skills/` | Agent dir + project dir | Built-in + gems + project + user |
 | Skill-by-path | ✅ | ❌ | Planned for v0.2 |
@@ -104,7 +104,7 @@ Returns array of `ValidationError` data objects.
 
 Two skills shipped in `lib/ask/skills/<name>/SKILL.md`:
 
-**`explore_codebase`** — Step-by-step codebase exploration methodology:
+**`skill.design`** — Step-by-step codebase exploration methodology:
 1. Read README
 2. Check config files (Gemfile, package.json, etc.)
 3. Find entry point
@@ -113,7 +113,7 @@ Two skills shipped in `lib/ask/skills/<name>/SKILL.md`:
 6. Run tests
 7. Trace one feature through the layers
 
-**`debug_methodology`** — Systematic debugging approach:
+**`skill.compose`** — Systematic debugging approach:
 1. Reproduce consistently (exact steps, environment, error)
 2. Gather information (logs, code, git history)
 3. Form one hypothesis at a time
@@ -228,7 +228,7 @@ If you see sequential scans, you likely need an index.
 ## What Done Means for v0.1.0
 
 - Core data types + sources + registry + formatter + validator all implemented
-- Built-in skills (explore_codebase, debug_methodology) ship and load correctly
+- Built-in skills (skill.design, skill.compose) ship and load correctly
 - Gem discovery works (skills from ask-rails, ask-github etc. auto-found)
 - Filesystem discovery works (.agents/skills/, ~/.config/ask/skills/)
 - Full test suite passes

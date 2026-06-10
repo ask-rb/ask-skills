@@ -15,10 +15,6 @@ module Ask
       autoload :Gems, "ask/skills/sources/gems"
     end
 
-    module Format
-      autoload :Prompt, "ask/skills/formats/prompt"
-    end
-
     class << self
       def discover(sources: nil)
         Registry.new(sources || default_sources)

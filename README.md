@@ -24,7 +24,7 @@ require "ask/skills"
 # Discover all available skills
 registry = Ask::Skills.discover
 # => Finds skills from:
-#    - Built-in skills (explore_codebase, debug_methodology)
+#    - Built-in skills (skill.design, skill.compose)
 #    - Installed gems (ask-rails, ask-github, etc.)
 #    - .agents/skills/*/ in the project
 #    - ~/.config/ask/skills/*/ in home dir
@@ -90,7 +90,7 @@ When investigating database performance issues, follow these steps:
 
 | Gem | Skills |
 |---|---|
-| `ask-skills` (built-in) | explore_codebase, debug_methodology |
+| `ask-skills` (built-in) | skill.design, skill.compose |
 | `ask-rails` | rails_db, rails_debug, rails_deploy |
 | `ask-github` | pr_review, issue_triage |
 | `ask-slack` | slack_compose |
@@ -107,7 +107,7 @@ require "ask/skills"
 agent = Ask::Agent.new(model: "claude-sonnet-4")
 
 # System prompt includes skill list
-# "Available skills: explore_codebase, debug_methodology, rails_db..."
+# "Available skills: skill.design, skill.compose, rails_db..."
 # (Full instructions are NOT in the prompt — just names + descriptions)
 
 # Agent can load a skill on demand when it needs domain guidance
