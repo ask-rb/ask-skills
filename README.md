@@ -175,8 +175,13 @@ registry = Ask::Skills.discover(sources: [custom])
 |---|---|
 | `ask-skills` (built-in) | skill.design, skill.compose |
 | `ask-rails` | rails.db_debug, rails.route_trouble, rails.deploy_pipeline |
-| `ask-github` | github.pr_review, github.issue_triage |
-| `ask-slack` | slack.compose |
+| `ask-github` | github.use_github |
+| `ask-slack` | slack.use_slack |
+| `ask-notion` | notion.use_notion |
+| `ask-linear` | linear.use_linear |
+| `ask-honeybadger` | honeybadger.use_honeybadger |
+| `ask-sentry` | sentry.use_sentry |
+| `ask-solid_errors` | solid_errors.use_solid_errors |
 | `ask-tools-shell` | shell.patterns |
 | `ask-llm-providers` | providers.model_select |
 

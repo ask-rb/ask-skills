@@ -1,28 +1,35 @@
 # Changelog
 
+## [0.2.0] - 2026-06-10
+
+### Added
+- Skills shipped with methodology gems (ask-rails, ask-github, ask-slack,
+  ask-tools-shell, ask-llm-providers) — 8 skills total
+- `Ask::Skills.load_file(path)` — load any markdown file as an ad-hoc skill
+- ask-agent integration: auto-discovery and system prompt injection on
+  `Ask::Agent::Session` initialization
+- `session.skill(name)` — load a skill by name (or file path) and inject
+  its full instructions into the conversation
+
+### Changed
+- `Ask::Skills.discover` now discovers skills from methodology gem gems too
+  (via `Gem.find_files`)
+
 ## [0.1.0] - 2026-06-10
 
 ### Added
 - Initial release
 - `Ask::Skills::Skill` — Data.define with name, description, instructions, source
-  - `to_s` and `to_prompt_entry` formatting methods
-- `Ask::Skills::Registry` — holds discovered skills with:
-  - `[]` lookup, `names` list, `format_for_prompt` markdown output
-  - Priority resolution: first source wins
+- `Ask::Skills::Registry` — holds discovered skills
 - `Ask::Skills::Formatter` — generates markdown and XML output
 - `Ask::Skills::Validator` — validates required fields, name format, duplicates
-- `Ask::Skills.discover` — discover skills from all configured sources:
-  1. Project-local (`.agents/skills/`) — highest priority
-  2. User-global (`~/.config/ask/skills/`)
-  3. Installed gems (via `Gem.find_files`)
-  4. Built-in (skill.design, skill.compose) — lowest priority
-- `Ask::Skills::Source::Filesystem` — scan a directory for `*/SKILL.md` files
-- `Ask::Skills::Source::Gems` — discover skills from all installed gems
-- Built-in skills:
-  - `skill.design` — How to design and write effective skills
-  - `skill.compose` — How skills interact, combine, and resolve
+- `Ask::Skills.discover` — discover skills from all configured sources
+- Built-in skills (skill.design, skill.compose)
 - Full test suite with 68 tests
-- Frontmatter parsing (name, description, optional metadata)
-- YAML frontmatter support with quoted value handling
-- Error handling for missing directories, malformed skills
-- Thread-safe read-only registry access
+
+## [0.2.1] - 2026-06-10
+
+### Changed
+- Replaced workflow-specific service skills with navigation-focused
+  `use_{service}` skills across all 7 service gems
+- Updated README to document the new naming convention
