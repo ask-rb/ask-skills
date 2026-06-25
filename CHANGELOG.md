@@ -1,3 +1,7 @@
+## [0.2.2] - 2026-06-25
+
+### Changed
+- Infrastructure: rubocop, overcommit, bin/setup, CI matrix, gemspec test, .minitest config.
 # Changelog
 
 ## [0.2.0] - 2026-06-10
