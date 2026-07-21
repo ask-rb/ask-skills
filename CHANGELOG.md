@@ -1,3 +1,41 @@
+## [0.3.0] - 2026-07-21
+
+### Added
+
+- **New discovery paths** — skills are now discovered from `agents/shared/skills/` and `app/agents/shared/skills/` alongside the legacy `.agents/skills/`. These paths follow the existing `agents/` convention already established for agent definitions.
+
+  ```
+  agents/
+  ├── health_check/
+  ├── daily_report/
+  └── shared/
+      ├── tools/          ← shared tools
+      └── skills/         ← new: shared skills
+          └── rails_debug/SKILL.md
+  ```
+
+- **Per-agent skills** — `Ask::Skills.discover(agent_dir:)` discovers skills scoped to a specific agent directory. These have highest priority over shared, legacy, user, gem, and built-in skills.
+
+  ```
+  agents/health_check/
+  ├── agent.rb
+  ├── instructions.md
+  └── skills/             ← new: only available to health_check agent
+      └── nginx_debug/SKILL.md
+  ```
+
+- **ask-agent integration** — `Ask::Agent::Session` accepts `agent_dir:` parameter. When creating a session from an agent definition via `Ask::Agent.new("name")`, per-agent skills are auto-discovered and included. No configuration needed.
+
+### Changed
+
+- `Ask::Skills.discover` now accepts `agent_dir:` keyword. When provided, the source list starts with the per-agent skills directory (highest priority). Shared project skills from `agents/shared/skills/` and `app/agents/shared/skills/` are included in the default source list.
+- Backward compatible — legacy `.agents/skills/` continues to work.
+
+### Tested
+
+- 10 new integration tests: discovery from `agents/shared/skills/`, `app/agents/shared/skills/`, per-agent skills, priority ordering, backward compatibility with `.agents/skills/`, and source list verification.
+- Full suite: 79 tests, 217 assertions — 0 failures.
+
 ## [0.2.2] - 2026-06-25
 
 ### Changed

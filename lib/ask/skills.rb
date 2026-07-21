@@ -16,33 +16,29 @@ module Ask
     end
 
     class << self
-      def discover(sources: nil)
-        Registry.new(sources || default_sources)
+      # Discover skills from all configured sources.
+      #
+      # @param agent_dir [String, nil] optional agent directory to discover
+      #   per-agent skills from (e.g. "agents/health_check")
+      # @param sources [Array<Source::Base>, nil] custom source list
+      # @return [Registry]
+      def discover(sources: nil, agent_dir: nil)
+        all_sources = sources || build_source_list(agent_dir: agent_dir)
+        Registry.new(all_sources)
       end
 
+      # Default sources when no custom sources or agent directory given.
+      # Legacy `.agents/skills/` is kept for backward compatibility.
       def default_sources
-        [
-          # Highest priority first — first source wins in Registry
-          Source::Filesystem.new(project_dir: ".agents/skills"),
-          Source::Filesystem.new(user_dir: "~/.config/ask/skills"),
-          Source::Gems.new,
-          Source::Filesystem.new(dir: builtin_skills_dir),
-        ]
+        build_source_list
       end
 
+      # Built-in skills that ship with the gem.
       def builtin_skills_dir
-        # Skills live in lib/ask/skills/<skill_name>/SKILL.md
-        # __dir__ in this file (lib/ask/skills.rb) is lib/ask/
-        # The skill directories are in lib/ask/skills/
         File.join(__dir__, "skills")
       end
 
       # Load a skill from an arbitrary markdown file path.
-      # Parses frontmatter if present, otherwise uses the filename as the skill name.
-      #
-      # @param path [String] absolute or relative path to a markdown (.md) file
-      # @return [Skill] a skill with the file's content as instructions
-      # @raise [Errno::ENOENT] if the file does not exist
       def load_file(path)
         path = File.expand_path(path)
         content = File.read(path)
@@ -61,7 +57,6 @@ module Ask
       end
 
       # Simple frontmatter parsing for skill files.
-      # Returns a hash of key-value pairs from between --- markers.
       def parse_frontmatter(content)
         return {} unless content.start_with?("---\n")
         end_idx = content.index("\n---\n", 4)
@@ -85,6 +80,38 @@ module Ask
         return content unless end_idx
         body = content[(end_idx + 5)..] || ""
         body.sub(/\A\n/, "").strip
+      end
+
+      private
+
+      # Build the prioritized source list.
+      # Order: per-agent → shared project → legacy → user → gems → built-in
+      def build_source_list(agent_dir: nil)
+        sources = []
+
+        # Per-agent skills (highest priority — agent-specific first)
+        if agent_dir
+          per_agent = File.join(agent_dir, "skills")
+          sources << Source::Filesystem.new(dir: per_agent)
+        end
+
+        # Shared project skills
+        sources << Source::Filesystem.new(project_dir: "agents/shared/skills")
+        sources << Source::Filesystem.new(project_dir: "app/agents/shared/skills")
+
+        # Legacy project skills (backward compat)
+        sources << Source::Filesystem.new(project_dir: ".agents/skills")
+
+        # User-global skills
+        sources << Source::Filesystem.new(user_dir: "~/.config/ask/skills")
+
+        # Gems
+        sources << Source::Gems.new
+
+        # Built-in
+        sources << Source::Filesystem.new(dir: builtin_skills_dir)
+
+        sources
       end
     end
   end
