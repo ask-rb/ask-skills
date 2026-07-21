@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Ask
   module Skills
     class Formatter
@@ -10,7 +12,11 @@ module Ask
 
         lines = ["", "## Available Skills", ""]
         @skills.each_value do |skill|
-          lines << skill.to_prompt_entry
+          line = skill.to_prompt_entry
+          if skill.tags.any?
+            line += " [#{skill.tags.join(", ")}]"
+          end
+          lines << line
         end
         lines << ""
         lines << "When a task matches a skill's description, load it for step-by-step methodology."
@@ -26,6 +32,18 @@ module Ask
           lines << "  <skill>"
           lines << "    <name>#{escape_xml(skill.name)}</name>"
           lines << "    <description>#{escape_xml(skill.description)}</description>"
+          if skill.tags.any?
+            lines << "    <tags>#{escape_xml(skill.tags.join(", "))}</tags>"
+          end
+          if skill.siblings.any?
+            lines << "    <siblings>"
+            skill.siblings.each do |category, files|
+              lines << "      <#{category}>"
+              files.each { |f| lines << "        <file>#{escape_xml(f)}</file>" }
+              lines << "      </#{category}>"
+            end
+            lines << "    </siblings>"
+          end
           lines << "  </skill>"
         end
         lines << "</available_skills>"

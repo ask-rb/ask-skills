@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    ask-skills (0.2.2)
+    ask-skills (0.3.0)
 
 GEM
   remote: https://rubygems.org/
@@ -23,7 +23,7 @@ DEPENDENCIES
   rake (~> 13.0)
 
 CHECKSUMS
-  ask-skills (0.2.2)
+  ask-skills (0.3.0)
   bundler (4.0.12) sha256=7f8b757d28dfb636e7b24fba2344ac6dd13b5b24f4b46d62573d483f211825ac
   minitest (5.27.0)
   mocha (3.1.0)

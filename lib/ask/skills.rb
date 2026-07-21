@@ -61,16 +61,34 @@ module Ask
         return {} unless content.start_with?("---\n")
         end_idx = content.index("\n---\n", 4)
         return {} unless end_idx
+
         yaml_str = content[4...end_idx]
         yaml = {}
+        current_key = nil
+        current_value = nil
+
         yaml_str.split("\n").each do |line|
-          if (m = line.match(/\A(\w+):\s*(.+)\z/))
-            value = m[2].strip
-            value = value.gsub(/\A"|"\z/, "").gsub(/\A'|'\z/, "")
-            yaml[m[1]] = value
+          if (m = line.match(/\A(\w[\w_]*):\s*(.*)\z/))
+            if current_key
+              yaml[current_key] = process_metadata_value(current_value.strip)
+            end
+            current_key = m[1]
+            current_value = m[2].strip
+          elsif current_key && line.match?(/\A\s+/)
+            current_value << " #{line.strip}"
           end
         end
+
+        if current_key
+          yaml[current_key] = process_metadata_value(current_value.strip)
+        end
+
         yaml
+      end
+
+      def process_metadata_value(value)
+        return value unless value
+        value.gsub(/\A"|"\z/, "").gsub(/\A'|'\z/, "")
       end
 
       # Extract the markdown body from a file with frontmatter.

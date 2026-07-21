@@ -1,3 +1,53 @@
+## [0.4.0] - 2026-07-21
+
+### Added
+
+- **Enhanced frontmatter** — skill metadata now supports `tags`, `version`, `author`, and any custom fields alongside `name` and `description`. Frontmatter parser handles multi-line values and preserves all metadata in `skill.metadata`.
+
+  ```markdown
+  ---
+  name: rails_debug
+  description: Debug Rails database issues
+  tags: rails, database, debugging
+  version: 2
+  ---
+  ```
+
+- **Sibling files in skills** — skills now discover sibling files and directories in the skill directory alongside `SKILL.md`. Recognized categories are discovered automatically: `references/`, `scripts/`, `assets/`. Unrecognized directories and flat files are also collected.
+
+  ```
+  rails_debug/
+  ├── SKILL.md           → instructions
+  ├── references/
+  │   ├── migration_guide.md
+  │   └── apis.md
+  └── scripts/
+      └── db_check.sh
+  ```
+
+  Accessible at runtime via `skill.references`, `skill.scripts`, `skill.assets`, and `skill.siblings`.
+
+- **XML formatter** now includes `<tags>` and `<siblings>` sections when present. Markdown prompt entries show tags inline (`[rails, database]`).
+
+- **`askr skills` CLI commands** — new `askr` subcommands for managing skills:
+
+  ```bash
+  askr skills list              # All skills with descriptions and tags
+  askr skills show rails_debug  # Full details + instructions + siblings
+  askr skills search deploy     # Filter by name, description, or tags
+  ```
+
+### Changed
+
+- `Skill` data object now includes `metadata` (Hash) and `siblings` (Hash) fields with default empty values. Backward compatible — existing `Skill.new(...)` calls without these fields get empty defaults.
+- `Source::Filesystem#parse_frontmatter` rewritten to support multi-line values and arbitrary metadata keys (not just `name`/`description`).
+- `Ask::Skills.parse_frontmatter` updated to match, with new `process_metadata_value` helper.
+
+### Tested
+
+- 18 new tests for: tags parsing, metadata preservation, sibling discovery (references, scripts, assets, flat files), hidden file filtering, empty sibling handling, formatter output with tags/siblings, and CLI commands.
+- Full suite: 97 tests, 265 assertions — 0 failures.
+
 ## [0.3.0] - 2026-07-21
 
 ### Added
