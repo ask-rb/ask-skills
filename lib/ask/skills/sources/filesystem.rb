@@ -4,8 +4,6 @@ module Ask
   module Skills
     module Source
       class Filesystem < Base
-        SIBLING_CATEGORIES = %w[references scripts assets].freeze
-
         def initialize(dir: nil, project_dir: nil, user_dir: nil)
           @path = dir || project_dir || (user_dir ? File.expand_path(user_dir) : nil)
         end

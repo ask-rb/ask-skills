@@ -19,12 +19,14 @@ module Ask
 
       def format_for_prompt
         return "" if @skills.empty?
-        lines = ["", "## Available Skills", ""]
-        @skills.each_value do |skill|
-          lines << skill.to_prompt_entry
-        end
-        lines << ""
-        lines.join("\n")
+        Formatter.new(@skills).to_prompt_section
+      end
+
+      # Full instructions for skills with +always: true+ in their frontmatter.
+      # These skills are auto-injected into the system prompt rather than
+      # being listed for the LLM to load on demand.
+      def always_active_skills
+        @skills.values.select { |s| s.metadata["always"] == "true" || s.metadata["always"] == true }
       end
 
       private
@@ -33,8 +35,13 @@ module Ask
         @sources.each do |source|
           source.load.each do |skill|
             next unless skill
-            # First source wins (project overrides gems, user overrides project)
-            @skills[skill.name] ||= skill
+            if @skills.key?(skill.name)
+              # First-wins collision: log diagnostic but keep first
+              warn "[ask-skills] Collision: skill '#{skill.name}' already loaded from " \
+                   "#{@skills[skill.name].source}, skipping #{skill.source}"
+            else
+              @skills[skill.name] = skill
+            end
           end
         end
       end
