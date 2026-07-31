@@ -8,9 +8,19 @@ module Ask
           "Gems"
         end
 
+        # Directory within the ask-skills gem that contains built-in skills.
+        # The built-in Filesystem source loads these separately, so we skip
+        # them here to avoid collision warnings.
+        BUILTIN_DIR = File.realpath(File.join(__dir__, ".."))
+        private_constant :BUILTIN_DIR
+
         def load
           skills = []
           Gem.find_files(GLOB).each do |path|
+            # Skip skills shipped with the ask-skills gem — they are loaded
+            # separately by the built-in Filesystem source.
+            next if File.realpath(path).start_with?(BUILTIN_DIR)
+
             if (skill = parse_skill(path))
               skills << skill
             end

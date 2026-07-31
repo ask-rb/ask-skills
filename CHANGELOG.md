@@ -1,3 +1,11 @@
+## [0.4.2] - 2026-07-31
+
+### Fixed
+
+- **Skip built-in skills in gem sources discovery** — the Filesystem source
+  loads built-in skills shipped with the ask-skills gem separately, so the
+  Gems source now skips them to avoid collision warnings.
+
 ## [0.4.0] - 2026-07-21
 
 ### Added
