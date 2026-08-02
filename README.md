@@ -30,8 +30,9 @@ registry = Ask::Skills.discover
 # => Finds skills from:
 #    - Built-in skills (skill.design, skill.compose)
 #    - Installed gems (ask-rails, ask-github, etc.)
-#    - .agents/skills/*/ in the project
+#    - agents/shared/skills/*/ in the project (app/agents/shared/skills/ in Rails)
 #    - ~/.config/ask/skills/*/ in home dir
+#    Pass agent_dir: to also include per-agent skills (agents/<name>/skills/)
 
 # List available skills
 registry.names
@@ -63,24 +64,31 @@ one is used. **First source wins:**
 
 | Priority | Source | Location |
 |----------|--------|----------|
-| 1 (highest) | Project-local | `.agents/skills/<name>/SKILL.md` |
-| 2 | User-global | `~/.config/ask/skills/<name>/SKILL.md` |
-| 3 | Installed gems | `Gem.find_files("ask/skills/*/SKILL.md")` |
-| 4 (lowest) | Built-in | Shipped with ask-skills gem |
+| 1 (highest) | Per-agent | `agents/<name>/skills/<skill>/SKILL.md` |
+| 2 | Shared project | `agents/shared/skills/<skill>/SKILL.md` |
+| 3 | Rails shared | `app/agents/shared/skills/<skill>/SKILL.md` |
+| 4 | User-global | `~/.config/ask/skills/<skill>/SKILL.md` |
+| 5 | Installed gems | `Gem.find_files("ask/skills/*/SKILL.md")` |
+| 6 (lowest) | Built-in | Shipped with ask-skills gem |
 
 This means you can override any skill by placing a file with the same name in
-your project's `.agents/skills/` directory.
+your project's `agents/shared/skills/` directory (or per-agent in
+`agents/<name>/skills/`).
 
 ## Skill Directory Convention
 
 ```
-.agents/skills/
+agents/shared/skills/
 ├── db_debug/
-│   └── SKILL.md          ← project-local skill
+│   └── SKILL.md          ← project-shared skill
 ├── deploy/
 │   └── SKILL.md
 └── custom_check/
     └── SKILL.md
+
+agents/health_check/skills/
+└── nginx_debug/
+    └── SKILL.md          ← per-agent skill (only health_check)
 
 ~/.config/ask/skills/
 ├── my_workflow/

@@ -28,7 +28,6 @@ module Ask
       end
 
       # Default sources when no custom sources or agent directory given.
-      # Legacy `.agents/skills/` is kept for backward compatibility.
       def default_sources
         build_source_list
       end
@@ -103,7 +102,7 @@ module Ask
       private
 
       # Build the prioritized source list.
-      # Order: per-agent → shared project → legacy → user → gems → built-in
+      # Order: per-agent → shared project → user → gems → built-in
       def build_source_list(agent_dir: nil)
         sources = []
 
@@ -116,9 +115,6 @@ module Ask
         # Shared project skills
         sources << Source::Filesystem.new(project_dir: "agents/shared/skills")
         sources << Source::Filesystem.new(project_dir: "app/agents/shared/skills")
-
-        # Legacy project skills (backward compat)
-        sources << Source::Filesystem.new(project_dir: ".agents/skills")
 
         # User-global skills
         sources << Source::Filesystem.new(user_dir: "~/.config/ask/skills")

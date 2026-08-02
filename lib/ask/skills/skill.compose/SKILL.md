@@ -11,11 +11,12 @@ multiple places, the first source wins:
 1. **Built-in** (shipped with ask-skills gem) — lowest priority
 2. **Installed gems** (ask-rails, ask-github, etc.)
 3. **User-global** (`~/.config/ask/skills/`)
-4. **Project-local** (`.agents/skills/` in the project) — highest priority
+4. **Shared project** (`agents/shared/skills/`, or `app/agents/shared/skills/` in Rails)
+5. **Per-agent** (`agents/<name>/skills/`) — highest priority
 
 This means you can override any skill by placing a file with the same name in
-your project's `.agents/skills/` directory. Or provide personal defaults in
-`~/.config/ask/skills/`.
+`agents/shared/skills/` (or a per-agent `agents/<name>/skills/`). Or provide
+personal defaults in `~/.config/ask/skills/`.
 
 ## How Skills Appear in the System Prompt
 

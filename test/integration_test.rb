@@ -29,7 +29,7 @@ module Ask
 
       def test_full_discovery_pipeline
         # Build a test project structure
-        project_skills = File.join(@tmpdir, ".agents", "skills", "project.custom")
+        project_skills = File.join(@tmpdir, "agents", "shared", "skills", "project.custom")
         FileUtils.mkdir_p(project_skills)
         File.write(File.join(project_skills, "SKILL.md"), <<~MD)
           ---
@@ -49,7 +49,7 @@ module Ask
 
       def test_project_overrides_gem
         # Create a project-level override of a built-in skill
-        project_skill_dir = File.join(@tmpdir, ".agents", "skills", "skill.design")
+        project_skill_dir = File.join(@tmpdir, "agents", "shared", "skills", "skill.design")
         FileUtils.mkdir_p(project_skill_dir)
         File.write(File.join(project_skill_dir, "SKILL.md"), <<~MD)
           ---

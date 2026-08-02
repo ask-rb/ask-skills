@@ -31,12 +31,6 @@ module Ask
         assert registry["deploy_bot"], "Should discover from app/agents/shared/skills/"
       end
 
-      def test_legacy_dot_agents_skills_still_works
-        create_skill(".agents/skills/legacy_skill", "legacy_skill", "Old skill", "Backward compat content")
-        registry = Ask::Skills.discover
-        assert registry["legacy_skill"], "Should discover from .agents/skills/ (backward compat)"
-      end
-
       def test_per_agent_skills_via_agent_dir
         create_skill("agents/health_check/skills/nginx_debug", "nginx_debug", "Debug Nginx", "Nginx debugging steps")
         registry = Ask::Skills.discover(agent_dir: "agents/health_check")
@@ -51,12 +45,16 @@ module Ask
         assert_includes registry["debug"].description, "Specific"
       end
 
-      def test_shared_skills_override_legacy
+      def test_shared_skills_override_user_config
         create_skill("agents/shared/skills/database", "database", "Shared DB skill", "Shared content")
-        create_skill(".agents/skills/database", "database", "Legacy DB skill", "Legacy content")
-        registry = Ask::Skills.discover
+        create_skill("home/.config/ask/skills/database", "database", "User DB skill", "User content")
+        sources = [
+          Ask::Skills::Source::Filesystem.new(project_dir: "agents/shared/skills"),
+          Ask::Skills::Source::Filesystem.new(user_dir: "home/.config/ask/skills")
+        ]
+        registry = Ask::Skills.discover(sources: sources)
         assert registry["database"]
-        assert_includes registry["database"].description, "Shared DB"
+        assert_includes registry["database"].description, "Shared"
       end
 
       def test_multiple_shared_skill_paths
@@ -82,8 +80,6 @@ module Ask
                "Should include agents/shared/skills/"
         assert paths.any? { |p| p&.end_with?("app/agents/shared/skills") },
                "Should include app/agents/shared/skills/"
-        assert paths.any? { |p| p&.end_with?(".agents/skills") },
-               "Should include legacy .agents/skills/"
       end
 
       def test_build_source_list_includes_per_agent_when_given

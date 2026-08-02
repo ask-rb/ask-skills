@@ -1,3 +1,12 @@
+## [0.5.0] - 2026-08-02
+
+### Removed
+
+- **Legacy `.agents/skills/` discovery path** — project skills now live in
+  `agents/shared/skills/` (or `app/agents/shared/skills/` in Rails). Move any
+  skills placed in `.agents/skills/` to the shared directory; nothing else
+  changes.
+
 ## [0.4.2] - 2026-07-31
 
 ### Fixed
