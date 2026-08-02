@@ -2,13 +2,11 @@
 
 [![Gem Version](https://badge.fury.io/rb/ask-skills.svg)](https://badge.fury.io/rb/ask-skills)
 
-Discover, validate, and load agent skills from project directories, user config,
-and installed gems. Ships built-in skills for codebase exploration and debugging
-methodology.
-
-A **skill** is a markdown file containing step-by-step methodology for a specific
-domain task. It's listed in the agent's system prompt (just name + description)
-and loaded on-demand when the agent decides it needs domain guidance.
+Discover, validate, and load agent skills for the ask-rb ecosystem. A skill
+is a markdown file with step-by-step methodology for a domain task. Skills are
+listed in the agent's system prompt (name + description) and loaded on demand
+when the agent decides it needs domain guidance. Ships built-in skills
+(`skill.design`, `skill.compose`).
 
 ## Installation
 
@@ -16,189 +14,89 @@ and loaded on-demand when the agent decides it needs domain guidance.
 gem "ask-skills"
 ```
 
-Then:
-
-```ruby
-require "ask/skills"
-```
-
 ## Quick Start
 
 ```ruby
-# Discover all available skills
-registry = Ask::Skills.discover
-# => Finds skills from:
-#    - Built-in skills (skill.design, skill.compose)
-#    - Installed gems (ask-rails, ask-github, etc.)
-#    - agents/shared/skills/*/ in the project (app/agents/shared/skills/ in Rails)
-#    - ~/.config/ask/skills/*/ in home dir
-#    Pass agent_dir: to also include per-agent skills (agents/<name>/skills/)
+require "ask/skills"
 
-# List available skills
-registry.names
-# => ["skill.compose", "skill.design"]
+# Discover skills from project, user config, gems, and built-ins
+registry = Ask::Skills.discover
+registry.names   # => ["skill.compose", "skill.design", ...]
 
 # Get a skill by name
 skill = registry["skill.design"]
 skill.name         # => "skill.design"
-skill.description  # => "How to design and write effective skills for the ask-rb ecosystem"
+skill.description  # => "How to design and write effective skills..."
 skill.instructions # => markdown body with step-by-step methodology
 
-# Format for system prompt
-registry.format_for_prompt
-# => "## Available Skills\n\n- **skill.design**: How to design..."
-
-# XML format for machine parsing
-formatter = Ask::Skills::Formatter.new(registry)
-formatter.to_xml
-# => "<available_skills><skill><name>skill.design</name>..."
-
-# Validate skills
-errors = Ask::Skills::Validator.new(registry.skills.values).validate_all
+# Include per-agent skills too
+registry = Ask::Skills.discover(agent_dir: "agents/health_check")
 ```
 
-## Priority Resolution
+## Where Skills Live
 
-When the same skill name exists in multiple places, priority determines which
-one is used. **First source wins:**
-
-| Priority | Source | Location |
-|----------|--------|----------|
-| 1 (highest) | Per-agent | `agents/<name>/skills/<skill>/SKILL.md` |
-| 2 | Shared project | `agents/shared/skills/<skill>/SKILL.md` |
-| 3 | Rails shared | `app/agents/shared/skills/<skill>/SKILL.md` |
-| 4 | User-global | `~/.config/ask/skills/<skill>/SKILL.md` |
-| 5 | Installed gems | `Gem.find_files("ask/skills/*/SKILL.md")` |
-| 6 (lowest) | Built-in | Shipped with ask-skills gem |
-
-This means you can override any skill by placing a file with the same name in
-your project's `agents/shared/skills/` directory (or per-agent in
-`agents/<name>/skills/`).
-
-## Skill Directory Convention
+Project skills live in `agents/shared/skills/` (or `app/agents/shared/skills/`
+in Rails), per-agent skills in `agents/<name>/skills/`, user skills in
+`~/.config/ask/skills/`, and gems ship skills under `ask/skills/*/SKILL.md`.
 
 ```
 agents/shared/skills/
-├── db_debug/
-│   └── SKILL.md          ← project-shared skill
-├── deploy/
-│   └── SKILL.md
-└── custom_check/
-    └── SKILL.md
+└── db_debug/
+    └── SKILL.md          # project-shared skill
 
 agents/health_check/skills/
 └── nginx_debug/
-    └── SKILL.md          ← per-agent skill (only health_check)
+    ┗── SKILL.md          # per-agent skill
 
 ~/.config/ask/skills/
-├── my_workflow/
-│   └── SKILL.md          ← user-global skill
-└── team_patterns/
-    └── SKILL.md
-
-# From installed gems:
-ask-rails-0.2.0/lib/ask/skills/
-├── rails.db_debug/SKILL.md
-└── rails.deploy_pipeline/SKILL.md
-
-ask-github-0.1.0/lib/ask/skills/
-├── github.pr_review/SKILL.md
-└── github.issue_triage/SKILL.md
+└── my_workflow/
+    └── SKILL.md          # user-global skill
 ```
+
+When the same skill name exists in multiple places, the first source wins:
+per-agent > shared project (Rails included) > user > gems > built-in. Place a
+skill with the same name in a higher-priority location to override it.
 
 ## Skill Format
 
 ```markdown
 ---
-name: rails.db_debug
-description: Step-by-step methodology for debugging database issues in Rails
+name: db_debug
+description: Step-by-step methodology for debugging database issues
+tags: database, debugging
+version: 1
+author: your-team
+always: true
 ---
 
-When investigating database performance issues, follow these steps:
-
-1. **Understand the Schema** — Use ReadModel to inspect...
-2. **Check Indexes** — Query pg_indexes for missing indexes...
-3. **Explain Slow Queries** — Use EXPLAIN ANALYZE on...
+When investigating database performance issues, follow these steps...
 ```
 
-## Built-in Skills
+`always: true` auto-injects the full instructions into the system prompt
+instead of listing the skill for on-demand loading.
 
-| Skill | Description |
-|-------|-------------|
-| `skill.design` | How to design and write effective skills for the ask-rb ecosystem |
-| `skill.compose` | How skills interact, combine, and resolve in the ask-rb ecosystem |
+## Essential API
 
-## API Reference
-
-### `Ask::Skills.discover(sources: nil)`
-
-Returns a `Registry` with skills from all sources, in priority order.
-Pass `sources:` to override with custom sources.
-
-### `Ask::Skills::Registry`
-
-| Method | Description |
-|--------|-------------|
-| `[]` | Lookup skill by name |
-| `names` | List all skill names |
-| `skills` | Hash of name → Skill |
-| `format_for_prompt` | Generate markdown section |
-
-### `Ask::Skills::Skill` (Data.define)
-
-| Attribute | Description |
-|-----------|-------------|
-| `name` | Unique identifier (e.g. `rails.db_debug`) |
-| `description` | One-line summary for system prompt |
-| `instructions` | Full markdown methodology body |
-| `source` | File path the skill was loaded from |
-
-### `Ask::Skills::Formatter`
-
-| Method | Description |
-|--------|-------------|
-| `to_prompt_section` | Markdown format for system prompt |
-| `to_xml` | XML format for machine parsing |
-
-### `Ask::Skills::Validator`
-
-| Method | Description |
-|--------|-------------|
-| `validate_all` | Validate all skills, return errors |
-| `validate` | Validate a single skill |
-
-## Custom Sources
-
-```ruby
-require "ask/skills"
-
-# Custom filesystem source
-custom = Ask::Skills::Source::Filesystem.new(dir: "/path/to/skills")
-registry = Ask::Skills.discover(sources: [custom])
-```
-
-## Gems That Ship Skills
-
-| Gem | Planned Skills |
+| Entry point | Purpose |
 |---|---|
-| `ask-skills` (built-in) | skill.design, skill.compose |
-| `ask-rails` | rails.db_debug, rails.route_trouble, rails.deploy_pipeline |
-| `ask-github` | github.use_github |
-| `ask-slack` | slack.use_slack |
-| `ask-notion` | notion.use_notion |
-| `ask-linear` | linear.use_linear |
-| `ask-honeybadger` | honeybadger.use_honeybadger |
-| `ask-sentry` | sentry.use_sentry |
-| `ask-solid_errors` | solid_errors.use_solid_errors |
-| `ask-tools-shell` | shell.patterns |
-| `ask-llm-providers` | providers.model_select |
+| `Ask::Skills.discover(agent_dir: nil, sources: nil)` | Build a `Registry` from all sources in priority order |
+| `registry["name"]` | Look up a skill by name |
+| `registry.names` | List all skill names |
+| `registry.skills` | Hash of name to `Skill` |
+| `Ask::Skills::Skill` | Data object: `name`, `description`, `instructions`, `source`, `metadata`, `siblings` (references, scripts, assets) |
+| `askr skills <list\|show\|search>` | CLI (from ask-agent) for inspecting available skills |
+
+## Full documentation
+
+The full ask-rb documentation lives at https://ask-rb.github.io/ask-docs.
+https://ask-rb.github.io/ask-docs/core/skills covers ask-skills in depth,
+including custom sources, the validator, and formatting for system prompts.
+API reference: https://ask-rb.github.io/ask-docs/reference/api.
 
 ## Development
 
-```bash
 bundle install
 bundle exec rake test
-```
 
 ## License
 
