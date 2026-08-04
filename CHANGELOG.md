@@ -1,3 +1,14 @@
+## [0.5.1] - 2026-08-05
+
+### Added
+
+- **`Ask::Skills::LoadSkillTool`** — the LLM-facing tool that loads a
+  discovered skill's full instructions on demand (progressive skill
+  disclosure). Moved here from ask-agent (where it was
+  `Ask::Agent::Skills::LoadSkillTool`) so the gem owns discovery, listing,
+  and loading together. The tool is an `Ask::Tool` (ask-tools) and returns
+  `Ask::Result` (ask-core); ask-skills now depends on ask-tools.
+
 ## [0.5.0] - 2026-08-02
 
 ### Removed

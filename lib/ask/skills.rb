@@ -8,6 +8,7 @@ module Ask
     autoload :Registry, "ask/skills/registry"
     autoload :Formatter, "ask/skills/formatter"
     autoload :Validator, "ask/skills/validator"
+    autoload :LoadSkillTool, "ask/skills/load_skill_tool"
 
     module Source
       autoload :Base, "ask/skills/sources/base"

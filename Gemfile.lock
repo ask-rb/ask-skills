@@ -2,10 +2,16 @@ PATH
   remote: .
   specs:
     ask-skills (0.5.0)
+      ask-tools (>= 0.1)
 
 GEM
   remote: https://rubygems.org/
   specs:
+    ask-core (0.9.0)
+    ask-schema (0.1.1)
+    ask-tools (0.5.0)
+      ask-core (>= 0.9.0)
+      ask-schema (>= 0.1)
     minitest (5.27.0)
     mocha (3.1.0)
       ruby2_keywords (>= 0.0.5)
@@ -23,7 +29,10 @@ DEPENDENCIES
   rake (~> 13.0)
 
 CHECKSUMS
+  ask-core (0.9.0)
+  ask-schema (0.1.1)
   ask-skills (0.5.0)
+  ask-tools (0.5.0)
   bundler (4.0.12) sha256=7f8b757d28dfb636e7b24fba2344ac6dd13b5b24f4b46d62573d483f211825ac
   minitest (5.27.0)
   mocha (3.1.0)
