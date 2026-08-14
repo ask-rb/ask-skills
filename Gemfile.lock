@@ -1,17 +1,17 @@
 PATH
   remote: .
   specs:
-    ask-skills (0.5.0)
-      ask-tools (>= 0.1)
+    ask-skills (0.5.1)
+      ask-tools (>= 0.6.1)
 
 GEM
   remote: https://rubygems.org/
   specs:
-    ask-core (0.9.0)
-    ask-schema (0.1.1)
-    ask-tools (0.5.0)
+    ask-core (0.11.2)
+    ask-schema (0.1.2)
+    ask-tools (0.6.1)
       ask-core (>= 0.9.0)
-      ask-schema (>= 0.1)
+      ask-schema (>= 0.1.2)
     minitest (5.27.0)
     mocha (3.1.0)
       ruby2_keywords (>= 0.0.5)
@@ -29,15 +29,15 @@ DEPENDENCIES
   rake (~> 13.0)
 
 CHECKSUMS
-  ask-core (0.9.0)
-  ask-schema (0.1.1)
-  ask-skills (0.5.0)
-  ask-tools (0.5.0)
+  ask-core (0.11.2) sha256=8257539e05c7b50ff87f77b01012f75575c65cc183d1ea69d8dca14f87d6890e
+  ask-schema (0.1.2) sha256=bbaacafcd41633b7982bdf7c5d4a4492c0e0779194b9d01bfa9788a37200b8d5
+  ask-skills (0.5.1)
+  ask-tools (0.6.1) sha256=57339911fa856307d21703a60f3426e80acfb6b23460a46198998a8796bfe0fc
   bundler (4.0.12) sha256=7f8b757d28dfb636e7b24fba2344ac6dd13b5b24f4b46d62573d483f211825ac
-  minitest (5.27.0)
-  mocha (3.1.0)
-  rake (13.4.2)
-  ruby2_keywords (0.0.5)
+  minitest (5.27.0) sha256=2d3b17f8a36fe7801c1adcffdbc38233b938eb0b4966e97a6739055a45fa77d5
+  mocha (3.1.0) sha256=75f42d69ebfb1f10b32489dff8f8431d37a418120ecdfc07afe3bc183d4e1d56
+  rake (13.4.2) sha256=cb825b2bd5f1f8e91ca37bddb4b9aaf345551b4731da62949be002fa89283701
+  ruby2_keywords (0.0.5) sha256=ffd13740c573b7301cf7a2e61fc857b2a8e3d3aff32545d6f8300d8bae10e3ef
 
 BUNDLED WITH
   4.0.12
