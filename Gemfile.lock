@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    ask-skills (0.5.2)
+    ask-skills (0.5.3)
       ask-tools (>= 0.6.2)
 
 GEM
@@ -31,7 +31,7 @@ DEPENDENCIES
 CHECKSUMS
   ask-core (0.11.2) sha256=8257539e05c7b50ff87f77b01012f75575c65cc183d1ea69d8dca14f87d6890e
   ask-schema (0.1.2) sha256=bbaacafcd41633b7982bdf7c5d4a4492c0e0779194b9d01bfa9788a37200b8d5
-  ask-skills (0.5.2)
+  ask-skills (0.5.3)
   ask-tools (0.6.2) sha256=72a387acff26c7a3734367151ad7cd845fe17c7750afecbdb1674d9baf54ae0c
   bundler (4.0.12) sha256=7f8b757d28dfb636e7b24fba2344ac6dd13b5b24f4b46d62573d483f211825ac
   minitest (5.27.0) sha256=2d3b17f8a36fe7801c1adcffdbc38233b938eb0b4966e97a6739055a45fa77d5

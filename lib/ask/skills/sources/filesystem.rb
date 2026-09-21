@@ -93,7 +93,7 @@ module Ask
           current_value = nil
 
           yaml_str.split("\n").each do |line|
-            if (m = line.match(/\A(\w[\w_]*):\s*(.*)\z/))
+            if (m = line.match(/\A(\w*):\s*(.*)\z/))
               # Store previous key if any
               if current_key
                 yaml[current_key] = process_value(current_value.strip)
